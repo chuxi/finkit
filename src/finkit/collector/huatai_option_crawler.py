@@ -43,13 +43,7 @@ class HuaTaiOptionCrawler(crawler.Crawler):
         """
         self.file_path = file_path
         self.tz = timezone(timedelta(hours=tz))
-        self.date = datetime.now(tz=self.tz).date()
-        if date is not None:
-            if date > self.date:
-                # 大于今天日期的交易日数据
-                raise ValueError("the date can not be greater than today")
-            else:
-                self.date = date
+        self.date = date
         if not file_path.endswith("/"):
             file_path = file_path + "/"
         self.file_path = file_path
@@ -58,9 +52,15 @@ class HuaTaiOptionCrawler(crawler.Crawler):
 
     def crawl(self):
         # 1. 检查该日期是否有数据，仅在交易日结束时有数据
+        today = datetime.now(tz=self.tz).date()
+        if self.date is None:
+            self.date = today
+        elif self.date > today:
+            logging.error("can not get future option data")
+            return
         #  1.1 判断工作日
         cal = self.date.weekday()
-        if cal == 0 or cal == 6:
+        if cal == 5 or cal == 6:
             logging.info("skipping weekends: %s", self.date.isocalendar())
             return
         option_file = self.file_path + OPTION_FILE_FORMAT.format(self.date.isoformat())
