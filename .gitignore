@@ -1,0 +1,11 @@
+venv
+.idea
+*.iml
+
+*.egg-info
+.pytest_cache
+
+dist
+logs
+
+*.pyc
