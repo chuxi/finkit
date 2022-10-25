@@ -26,7 +26,8 @@ OPTION_HEADER = \
      "date", "settle_price", "last_price", "close_yield",
      "multiplier", "unit", "price_limit", "ex_price_limit"]
 OPTION_COEFFICIENT_HEADER = \
-    ["contract_code", "expiry_date", "bid_coeff", "ask_coeff", "mid_coeff"]
+    ["contract_code", "expiry_date", "bid_coeff_a", "bid_coeff_b", "bid_coeff_c",
+     "ask_coeff_a", "ask_coeff_b", "ask_coeff_c", "mid_coeff_a", "mid_coeff_b", "mid_coeff_c"]
 
 
 class HuaTaiOptionCrawler(crawler.Crawler):
@@ -35,7 +36,7 @@ class HuaTaiOptionCrawler(crawler.Crawler):
     """
 
     def __init__(self, file_path: str = "./",
-                 date: _date = None,
+                 mydate: _date = None,
                  tz: int = 8, overwrite: bool = False):
         """
         :param date: 爬取数据所在的日期
@@ -43,9 +44,11 @@ class HuaTaiOptionCrawler(crawler.Crawler):
         """
         self.file_path = file_path
         self.tz = timezone(timedelta(hours=tz))
-        self.date = date
+        self.date = mydate
         if not file_path.endswith("/"):
             file_path = file_path + "/"
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
         self.file_path = file_path
         self.overwrite = overwrite
         logging.info("crawling huatai data source at date: %s", self.date.isoformat())
@@ -118,7 +121,7 @@ class HuaTaiOptionCrawler(crawler.Crawler):
                 my_date = coeff_begin.date().strftime("%Y/%m/%d")
                 if my_date in coeff_body:
                     coeffs.append({
-                        "expiry_date": my_date,
+                        "expiry_date": coeff_begin.date().isoformat(),
                         "coeff": coeff_body[my_date],
                     })
                 coeff_begin = coeff_begin + timedelta(days=1)
@@ -132,17 +135,27 @@ class HuaTaiOptionCrawler(crawler.Crawler):
                 logging.error("coefficients extraction error")
                 return
             for i in range(len(ask_coeffs)):
+                ask_coeff_parts = ask_coeffs[i]["coeff"].split(",")
+                mid_coeff_parts = mid_coeffs[i]["coeff"].split(",")
+                bid_coeff_parts = bid_coeffs[i]["coeff"].split(",")
+
                 option_coefficient.append({
                     "contract_code": data["contract_code"],
                     "expiry_date": ask_coeffs[i]["expiry_date"],
-                    "ask_coeff": ask_coeffs[i]["coeff"],
-                    "mid_coeff": mid_coeffs[i]["coeff"],
-                    "bid_coeff": bid_coeffs[i]["coeff"],
+                    "ask_coeff_a": float(ask_coeff_parts[0]),
+                    "ask_coeff_b": float(ask_coeff_parts[1]),
+                    "ask_coeff_c": float(ask_coeff_parts[2]),
+                    "mid_coeff_a": float(mid_coeff_parts[0]),
+                    "mid_coeff_b": float(mid_coeff_parts[1]),
+                    "mid_coeff_c": float(mid_coeff_parts[2]),
+                    "bid_coeff_a": float(bid_coeff_parts[0]),
+                    "bid_coeff_b": float(bid_coeff_parts[1]),
+                    "bid_coeff_c": float(bid_coeff_parts[2]),
                 })
 
         option_coefficient_file = self.file_path + \
             OPTION_COEFF_FILE_FORMAT.format(self.date.isoformat())
-        crawler.save(option_coefficient_file, OPTION_COEFFICIENT_HEADER, option_coefficient)
+        utils.save(option_coefficient_file, OPTION_COEFFICIENT_HEADER, option_coefficient)
 
         # 3. 获取最新收盘价
         option_prices = []
@@ -158,7 +171,7 @@ class HuaTaiOptionCrawler(crawler.Crawler):
                 param["last_price"] = prices["lastprice"]
                 param["close_yield"] = prices["closeyield"]
                 option_prices.append(param)
-        crawler.save(option_file, OPTION_HEADER, option_prices)
+        utils.save(option_file, OPTION_HEADER, option_prices)
 
 
 if __name__ == '__main__':
@@ -166,5 +179,5 @@ if __name__ == '__main__':
     module方式执行
     """
     utils.logging_config("./logging.yml")
-    cc = HuaTaiOptionCrawler(date=_date(2022, 9, 30), overwrite=True)
+    cc = HuaTaiOptionCrawler(mydate=_date(2022, 9, 30), overwrite=True)
     cc.crawl()

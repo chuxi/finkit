@@ -3,7 +3,10 @@ name = "finkit"
 description = "financial kit"
 version = "0.0.1"
 dependencies = [
-    "pyyaml",
+    "pyyaml >= 6.0",
+    "numpy >= 1.23",
+    "scipy >= 1.9",
+    "pandas >= 1.5",
 ]
 
 

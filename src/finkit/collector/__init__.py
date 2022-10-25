@@ -12,7 +12,7 @@ def main(args):
         date = datetime.fromisoformat(args.date).date()
 
     match args.source:
-        case "huatai_option":
+        case "huatai-option":
             worker = HuaTaiOptionCrawler(args.directory, date,
                 tz=args.timezone, overwrite=args.overwrite)
             worker.crawl()
