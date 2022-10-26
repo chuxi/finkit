@@ -1,10 +1,8 @@
 # define algorithms for the kit
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from .huatai_option_algo import HuataiOptionAlgo
-
-OPTION_SOURCE_FILE_FORMAT = "{}-{}-{}.csv"
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +13,8 @@ def option(args):
     mydate = None
     if args.date is not None:
         mydate = datetime.fromisoformat(args.date).date()
+    else:
+        mydate = datetime.now(tz=timezone(timedelta(hours=args.timezone))).date()
     if args.contract is None:
         raise ValueError("option contract is None")
     if args.strike_date is None:
@@ -42,5 +42,5 @@ def option(args):
         case _:
             raise ValueError("not a valid data source")
     logger.info("%s %s %s option calculation result: \n%s", args.source, args.contract, mydate, df)
-    filename = args.directory + "/" + OPTION_SOURCE_FILE_FORMAT.format(args.source, args.contract, mydate)
+    filename = args.directory + "/{}-{}-{}.csv".format(args.source, args.contract, mydate)
     df.to_csv(filename, float_format='%.3f', index=False)

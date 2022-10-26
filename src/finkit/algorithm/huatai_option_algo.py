@@ -11,7 +11,7 @@ from ..collector.huatai_option_crawler import HuaTaiOptionCrawler
 
 OPTION_FILE_FORMAT = "huatai-option-{}.csv"
 OPTION_COEFF_FILE_FORMAT = "huatai-option-coeff-{}.csv"
-HUATAI_TIMEZONE = timedelta(8)
+HUATAI_TIMEZONE = timedelta(hours=8)
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class HuataiOptionAlgo(Algorithm):
         with open(option_file, newline="") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                if row["contract_code"] == contract:
+                if row["contract_code"].startswith(contract.lower()):
                     option_data = row
                     break
         if option_data is None:
@@ -62,7 +62,7 @@ class HuataiOptionAlgo(Algorithm):
         with open(option_coeff_file, newline="") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                if row["contract_code"] == contract:
+                if row["contract_code"].startswith(contract.lower()):
                     available_strike_date.append(row["expiry_date"])
                     if row["expiry_date"] in strike_date:
                         option_coeff_data.append(row)

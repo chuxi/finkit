@@ -55,12 +55,6 @@ class HuaTaiOptionCrawler(crawler.Crawler):
 
     def crawl(self):
         # 1. 检查该日期是否有数据，仅在交易日结束时有数据
-        today = datetime.now(tz=self.tz).date()
-        if self.date is None:
-            self.date = today
-        elif self.date > today:
-            logging.error("can not get future option data")
-            return
         #  1.1 判断工作日
         cal = self.date.weekday()
         if cal == 5 or cal == 6:

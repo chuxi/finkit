@@ -48,6 +48,8 @@ def main():
                                help="the dividend rate for stock options, 0 for non-stock options")
     option_parser.add_argument("--method", action="store", default="bsm",
                                help="the option price algorithm method")
+    option_parser.add_argument("--timezone", "-z", action="store", default=8, type=int,
+                               help="specify the timezone info")
     option_parser.set_defaults(func=option)
 
     args = parser.parse_args()
