@@ -49,7 +49,18 @@ finkit collector -s huatai-option -d ./ --overwrite
 9. `--method`，期权计算方法，当前仅支持欧式期权`bsm`方法
 
 ```shell
-finkit option --source huatai-option --contract au2212.shfe --strike-price 396,399 --strike-date 2022-11-23,2022-11-24 --rate 0.03 --dividend-rate 0.03
+finkit option --source huatai-option \
+  --contract au2212.shfe \
+  --strike-price 396,399 \
+  --strike-date 2022-11-23,2022-11-24 \
+  --rate 0.03 --dividend-rate 0.03
 ```
 
 `finkit option`指调用option计算方法，该方法会自动下载并存储中间数据，若中间数据存在时，则直接计算期权价格
+
+### 上海期货日交易量
+
+```shell
+finkit collector -s daily-volume-shfe --date 2022-10-28
+```
+
