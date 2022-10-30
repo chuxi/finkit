@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 from .huatai_option_crawler import HuaTaiOptionCrawler
 from .shfe_daily_trading_volume import ShfeDailyTradingVolumeCrawler
 from .dce_daily_trading_volume import DceDailyTradingVolumeCrawler
+from .czce_daily_trading_volume import CzceDailyTradingVolumeCrawler
 
 
 def main(args):
@@ -25,5 +26,6 @@ def main(args):
         case "daily-volume":
             ShfeDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
             DceDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
+            CzceDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
         case _:
             raise ValueError("not a valid data source")

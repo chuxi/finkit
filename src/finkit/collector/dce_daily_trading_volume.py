@@ -36,23 +36,11 @@ class DceDailyTradingVolumeCrawler(Crawler):
             logging.info("data file exists, return")
             return
         form_data = {
-            # "memberDealPosiQuotes.variety": "a",
-            # "memberDealPosiQuotes.trade_type": "0",
             "year": self.mydate.year,
             "month": self.mydate.month - 1,
             "day": self.mydate.day,
-            # "contract.contract_id": "a2301",
-            # "contract.variety_id": "a",
             "batchExportFlag": "batch"
         }
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
-        }
-        # req = request.Request(DCE_DAILY_TRADING_VOLUME_URL,
-        #                       data=None,
-        #                       method="POST", headers=headers)
         download_file = self.file_path + "/" + DOWNLOAD_FILE_FORMAT.format(self.mydate.isoformat())
         request.urlretrieve(DCE_DAILY_TRADING_VOLUME_URL, download_file,
                             reporthook=None, data=urllib.parse.urlencode(form_data).encode())
@@ -76,13 +64,13 @@ class DceDailyTradingVolumeCrawler(Crawler):
                                 "volume": int(parts[2].replace(",", "")),
                                 "change": int(parts[3].replace(",", ""))
                             })
-                        elif parts[0] == "总计":
-                            volumes.append({
-                                "rank": 999,
-                                "part_name": "总计",
-                                "volume": int(parts[1].replace(",", "")),
-                                "change": int(parts[2].replace(",", "")),
-                            })
+                        # elif parts[0] == "总计":
+                        #     volumes.append({
+                        #         "rank": 999,
+                        #         "part_name": "总计",
+                        #         "volume": int(parts[1].replace(",", "")),
+                        #         "change": int(parts[2].replace(",", "")),
+                        #     })
                         # elif parts[0] == "期货公司会员":
                         #     total_volumes.append({
                         #         "rank": 0,
@@ -110,8 +98,9 @@ class DceDailyTradingVolumeCrawler(Crawler):
                 #         "ask_volume": total_volumes[2]["volume"],
                 #         "ask_volume_change": total_volumes[2]["change"]
                 #     })
-                if len(volumes) == 63:
-                    for i in range(21):
+                batch_size = int(len(volumes) / 3)
+                if batch_size * 3 == len(volumes):
+                    for i in range(batch_size):
                         trading_volumes.append({
                             "instrument": instrument,
                             "rank": volumes[i]["rank"],
@@ -130,4 +119,5 @@ class DceDailyTradingVolumeCrawler(Crawler):
             logger.error("no downloaded file in dce daily trading volume")
 
         # 删除下载的文件
-        os.remove(download_file)
+        if os.path.exists(download_file):
+            os.remove(download_file)

@@ -3,6 +3,7 @@ import pytest
 from finkit import utils
 from finkit.collector import ShfeDailyTradingVolumeCrawler
 from finkit.collector import DceDailyTradingVolumeCrawler
+from finkit.collector import CzceDailyTradingVolumeCrawler
 from datetime import date
 
 utils.logging_config("../logging.yml")
@@ -18,3 +19,10 @@ def test_shfe():
 def test_dce():
     cc = DceDailyTradingVolumeCrawler(mydate=date(2022, 11, 2), overwrite=True)
     cc.crawl()
+
+
+@pytest.mark.skip
+def test_czce():
+    CzceDailyTradingVolumeCrawler(mydate=date(2022, 10, 28), overwrite=True).crawl()
+
+
