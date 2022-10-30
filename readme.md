@@ -58,9 +58,9 @@ finkit option --source huatai-option \
 
 `finkit option`指调用option计算方法，该方法会自动下载并存储中间数据，若中间数据存在时，则直接计算期权价格
 
-### 上海期货日交易量
+### 期货日交易量
 
 ```shell
-finkit collector -s daily-volume-shfe --date 2022-10-28
+finkit collector -s daily-volume --date 2022-10-28
 ```
 

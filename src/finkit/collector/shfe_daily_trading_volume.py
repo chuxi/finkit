@@ -4,15 +4,11 @@ import os
 from datetime import date
 from urllib import request
 
-from .crawler import Crawler
+from .crawler import Crawler, DAILY_TRADING_VOLUME_HEADER
 from .. import utils
 
 SHFE_DAILY_TRADING_VOLUME_URL = "https://www.shfe.com.cn/data/dailydata/kx/pm{}.dat"
 SHFE_DAILY_TRADING_VOLUME_FILE_FORMAT = "daily-trading-volume-shfe-{}.csv"
-SHFE_DAILY_TRADING_VOLUME_HEADER = ["instrument", "rank", "part_name_1", "part_id_1",
-                                    "trading_volume", "trading_volume_change",
-                                    "part_name_2", "part_id_2", "bid_volume", "bid_volume_change",
-                                    "part_name_3", "part_id_3", "ask_volume", "ask_volume_change"]
 
 logger = logging.getLogger(__name__)
 
@@ -62,4 +58,4 @@ class ShfeDailyTradingVolumeCrawler(Crawler):
                     "ask_volume": el["CJ3"],
                     "ask_volume_change": el["CJ3_CHG"]
                 })
-            utils.save(option_file, SHFE_DAILY_TRADING_VOLUME_HEADER, volume_data)
+            utils.save(option_file, DAILY_TRADING_VOLUME_HEADER, volume_data)
