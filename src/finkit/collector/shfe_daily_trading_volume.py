@@ -42,19 +42,21 @@ class ShfeDailyTradingVolumeCrawler(Crawler):
                 return
             volume_data = []
             for el in data:
+                if el["RANK"] == 999:
+                    continue
                 volume_data.append({
                     "instrument": el["INSTRUMENTID"].strip(),
                     "rank": el["RANK"],
                     "part_name_1": el["PARTICIPANTABBR1"].strip(),
-                    "part_id_1": el["PARTICIPANTID1"].strip(),
+                    # "part_id_1": el["PARTICIPANTID1"].strip(),
                     "trading_volume": el["CJ1"],
                     "trading_volume_change": el["CJ1_CHG"],
                     "part_name_2": el["PARTICIPANTABBR2"].strip(),
-                    "part_id_2": el["PARTICIPANTID2"].strip(),
+                    # "part_id_2": el["PARTICIPANTID2"].strip(),
                     "bid_volume": el["CJ2"],
                     "bid_volume_change": el["CJ2_CHG"],
                     "part_name_3": el["PARTICIPANTABBR3"].strip(),
-                    "part_id_3": el["PARTICIPANTID3"].strip(),
+                    # "part_id_3": el["PARTICIPANTID3"].strip(),
                     "ask_volume": el["CJ3"],
                     "ask_volume_change": el["CJ3_CHG"]
                 })

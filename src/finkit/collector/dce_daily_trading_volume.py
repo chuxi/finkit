@@ -107,12 +107,12 @@ class DceDailyTradingVolumeCrawler(Crawler):
                             "part_name_1": volumes[i]["part_name"],
                             "trading_volume": volumes[i]["volume"],
                             "trading_volume_change": volumes[i]["change"],
-                            "part_name_2": volumes[i + 21]["part_name"],
-                            "bid_volume": volumes[i + 21]["volume"],
-                            "bid_volume_change": volumes[i + 21]["change"],
-                            "part_name_3": volumes[i + 42]["part_name"],
-                            "ask_volume": volumes[i + 42]["volume"],
-                            "ask_volume_change": volumes[i + 42]["change"]
+                            "part_name_2": volumes[i + batch_size]["part_name"],
+                            "bid_volume": volumes[i + batch_size]["volume"],
+                            "bid_volume_change": volumes[i + batch_size]["change"],
+                            "part_name_3": volumes[i + batch_size * 2]["part_name"],
+                            "ask_volume": volumes[i + batch_size * 2]["volume"],
+                            "ask_volume_change": volumes[i + batch_size * 2]["change"]
                         })
             utils.save(out_file, DAILY_TRADING_VOLUME_HEADER, trading_volumes)
         except zipfile.BadZipFile:
