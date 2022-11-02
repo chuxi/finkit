@@ -9,6 +9,8 @@ from .dce_daily_trading_volume import DceDailyTradingVolumeCrawler
 from .czce_daily_trading_volume import CzceDailyTradingVolumeCrawler
 from .cffex_daily_trading_volume import CffexDailyTradingVolumeCrawler
 
+from .shfe_daily_stock import ShfeDailyStockCrawler
+
 
 def main(args):
     logging.info("collector: source %s, output directory %s", args.source, args.directory)
@@ -29,5 +31,7 @@ def main(args):
             DceDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
             CzceDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
             CffexDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
+        case "daily-stock":
+            ShfeDailyStockCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
         case _:
             raise ValueError("not a valid data source")
