@@ -10,7 +10,7 @@ from datetime import date
 utils.logging_config("../logging.yml")
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_shfe():
     ShfeDailyTradingVolumeCrawler(mydate=date(2022, 10, 31), overwrite=True).crawl()
 
@@ -20,9 +20,9 @@ def test_dce():
     DceDailyTradingVolumeCrawler(mydate=date(2022, 10, 31), overwrite=True).crawl()
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 def test_czce():
-    CzceDailyTradingVolumeCrawler(mydate=date(2022, 10, 28), overwrite=True).crawl()
+    CzceDailyTradingVolumeCrawler(mydate=date(2022, 10, 31), overwrite=True).crawl()
 
 
 @pytest.mark.skip

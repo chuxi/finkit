@@ -49,7 +49,7 @@ class CzceDailyTradingVolumeCrawler(Crawler):
             request.urlretrieve(url, download_file)
             instrument = ""
             volumes = []
-            with open(download_file, "r") as f:
+            with open(download_file, "r", encoding="utf-8") as f:
                 for line in f.readlines():
                     parts = line.split()
                     if len(parts) > 1:

@@ -115,6 +115,7 @@ class DceDailyTradingVolumeCrawler(Crawler):
                             "ask_volume_change": volumes[i + batch_size * 2]["change"]
                         })
             utils.save(out_file, DAILY_TRADING_VOLUME_HEADER, trading_volumes)
+            download_zipfile.close()
         except zipfile.BadZipFile:
             logger.error("no downloaded file in dce daily trading volume")
 
