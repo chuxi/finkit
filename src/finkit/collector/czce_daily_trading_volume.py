@@ -67,7 +67,7 @@ class CzceDailyTradingVolumeCrawler(Crawler):
                                 "ask_volume": extract_num(parts[8]),
                                 "ask_volume_change": extract_num(parts[9])
                             })
-                        elif parts[0].startswith("品种："):
+                        elif parts[0].startswith("品种：") or parts[0].startswith("合约："):
                             instrument = parts[0].split("：")[1]
             utils.save(out_file, DAILY_TRADING_VOLUME_HEADER, volumes)
         except HTTPError:

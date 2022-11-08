@@ -22,7 +22,7 @@ def test_dce():
 
 # @pytest.mark.skip
 def test_czce():
-    CzceDailyTradingVolumeCrawler(mydate=date(2022, 10, 31), overwrite=True).crawl()
+    CzceDailyTradingVolumeCrawler(mydate=date(2022, 11, 1), overwrite=True).crawl()
 
 
 @pytest.mark.skip

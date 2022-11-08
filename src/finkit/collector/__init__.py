@@ -9,6 +9,11 @@ from .dce_daily_trading_volume import DceDailyTradingVolumeCrawler
 from .czce_daily_trading_volume import CzceDailyTradingVolumeCrawler
 from .cffex_daily_trading_volume import CffexDailyTradingVolumeCrawler
 
+from .shfe_collector import ShfeCollector
+from .dce_collector import DceCollector
+from .czce_collector import CzceCollector
+from .cffex_collector import CffexCollector
+
 from .shfe_daily_stock import ShfeDailyStockCrawler
 
 
@@ -31,7 +36,20 @@ def main(args):
             DceDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
             CzceDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
             CffexDailyTradingVolumeCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
-        case "daily-stock":
-            ShfeDailyStockCrawler(args.directory, mydate, overwrite=args.overwrite).crawl()
+        case "shfe":
+            cc = ShfeCollector(args.directory, mydate, overwrite=args.overwrite)
+            cc.crawl_daily_stock()
+            cc.crawl_daily_volume()
+        case "dce":
+            cc = DceCollector(args.directory, mydate, overwrite=args.overwrite)
+            cc.crawl_daily_stock()
+            cc.crawl_daily_volume()
+        case "czce":
+            cc = CzceCollector(args.directory, mydate, overwrite=args.overwrite)
+            cc.crawl_daily_stock()
+            cc.crawl_daily_volume()
+        case "cffex":
+            cc = CffexCollector(args.directory, mydate, overwrite=args.overwrite)
+            cc.crawl_daily_volume()
         case _:
             raise ValueError("not a valid data source")
