@@ -22,7 +22,7 @@ class FutureExchangeCollector(object):
         self.file_path = file_path
         self.overwrite = overwrite
         self.tz = timezone(timedelta(hours=tz))
-        self.mydate = mydate if mydate is not None else datetime.now(self.tz)
+        self.mydate = mydate if mydate is not None else datetime.now(self.tz).date()
         logging.info("init future exchange collector %s", self.__class__.__name__)
 
     def crawl_daily_stock(self):

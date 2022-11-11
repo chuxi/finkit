@@ -53,9 +53,10 @@ def cron(args):
 def run(job: dict, event: Event):
     func_parts = job["func"].split(".")
     args = None if "args" not in job else job["args"]
-    logger.info("starting cron job: %s", job["func"])
     while not event.is_set():
-        event.wait(job["cron"].next(now=datetime.now(job["timezone"])))
+        wait_time = job["cron"].next(now=datetime.now(job["timezone"]))
+        logger.info("%s next job will start after %.2f hours", job["func"], wait_time / 3600)
+        event.wait(wait_time)
         if not event.is_set():
             try:
                 _exec_method(func_parts, args)
