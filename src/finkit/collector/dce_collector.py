@@ -1,5 +1,4 @@
 import logging
-import os
 import urllib.parse
 import zipfile
 from datetime import date
@@ -23,8 +22,8 @@ logger = logging.getLogger(__name__)
 class DceCollector(FutureExchangeCollector):
 
     def __init__(self, file_path: str = "./data",
-                 mydate: date = None, overwrite: bool = False) -> None:
-        super().__init__(file_path, mydate, overwrite)
+                 mydate: date = None, overwrite: bool = False, tz: int = 8) -> None:
+        super().__init__(file_path, mydate, overwrite, tz)
 
     def crawl_daily_stock(self):
         out_file = self.file_path + "/" + DCE_DAILY_STOCK_FILE_FORMAT.format(self.mydate.isoformat())

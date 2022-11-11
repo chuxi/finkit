@@ -65,3 +65,37 @@ finkit collector -s shfe --date 2022-10-28
 ```
 
 1. `-s` 为 `shfe`, `dce`, `czce`, `cffex`
+
+
+### cron 定时任务
+
+通过配置`cron.yml`定时任务，可以方便管理启动数据下载工作，该进程启动后，`ctrl+c`退出进程即可
+
+
+```shell
+finkit cron --cron-file cron.yml
+```
+
+1. `--cron-file`, 传入`cron.yml`配置文件
+
+#### cron配置
+
+```yaml
+# 默认8小时时区，北京时间
+timezone: 8
+
+# cron 格式，参考 https://pypi.org/project/crontab/
+# [*] * * * * Mon-Fri [*]
+
+jobs:
+  - func: collector.shfe_collector.ShfeCollector.crawl_daily_volume
+    cron: "30 16 * * Mon-Fri"
+    args:
+      file_path: "./data"
+      overwrite: True
+#      mydate: 2022-11-10
+
+
+  - func: collector.shfe_collector.ShfeCollector.crawl_daily_stock
+    cron: "30 16 * * Mon-Fri"
+```

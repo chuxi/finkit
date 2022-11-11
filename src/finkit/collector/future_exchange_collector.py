@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import date
+from datetime import date, timezone, timedelta, datetime
 
 
 DAILY_VOLUME_HEADER = ["instrument", "rank",
@@ -18,10 +18,11 @@ class FutureExchangeCollector(object):
     def __init__(self,
                  file_path: str = "./data",
                  mydate: date = None,
-                 overwrite: bool = False) -> None:
+                 overwrite: bool = False, tz: int = 8) -> None:
         self.file_path = file_path
-        self.mydate = mydate
         self.overwrite = overwrite
+        self.tz = timezone(timedelta(hours=tz))
+        self.mydate = mydate if mydate is not None else datetime.now(self.tz)
         logging.info("init future exchange collector %s", self.__class__.__name__)
 
     def crawl_daily_stock(self):

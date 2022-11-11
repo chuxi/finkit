@@ -17,8 +17,8 @@ FUTURE_SYMBOLS = ["IF", "IC", "IM", "IH", "TS", "TF", "T"]
 class CffexCollector(FutureExchangeCollector):
 
     def __init__(self, file_path: str = "./data",
-                 mydate: date = None, overwrite: bool = False) -> None:
-        super().__init__(file_path, mydate, overwrite)
+                 mydate: date = None, overwrite: bool = False, tz: int = 8) -> None:
+        super().__init__(file_path, mydate, overwrite, tz)
 
     def crawl_daily_volume(self):
         out_file = self.file_path + "/" + CFFEX_DAILY_VOLUME_FILE_FORMAT.format(self.mydate.isoformat())

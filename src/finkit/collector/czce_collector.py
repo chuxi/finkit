@@ -25,8 +25,8 @@ class CzceCollector(FutureExchangeCollector):
     def __init__(self,
                  file_path: str = "./data",
                  mydate: date = None,
-                 overwrite: bool = False) -> None:
-        super().__init__(file_path, mydate, overwrite)
+                 overwrite: bool = False, tz: int = 8) -> None:
+        super().__init__(file_path, mydate, overwrite, tz)
 
     def crawl_daily_stock(self):
         out_file = self.file_path + "/" + CZCE_DAILY_STOCK_FILE_FORMAT.format(self.mydate.isoformat())
@@ -74,7 +74,7 @@ class CzceCollector(FutureExchangeCollector):
 
                 utils.save(out_file, DAILY_STOCK_HEADER, volumes)
         except HTTPError as e:
-            logger.warning("czce download daily stock failed")
+            logger.warning("czce download daily stock failed", e)
         except Exception as e:
             logger.error("czce daily stock failed", e)
 

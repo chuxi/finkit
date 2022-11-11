@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import date
 from urllib import request
+from urllib.error import HTTPError
 
 from .future_exchange_collector import FutureExchangeCollector, DAILY_STOCK_HEADER, DAILY_VOLUME_HEADER
 from .. import utils
@@ -20,8 +21,8 @@ class ShfeCollector(FutureExchangeCollector):
     def __init__(self,
                  file_path: str = "./data",
                  mydate: date = None,
-                 overwrite: bool = False) -> None:
-        super().__init__(file_path, mydate, overwrite)
+                 overwrite: bool = False, tz: int = 8) -> None:
+        super().__init__(file_path, mydate, overwrite, tz)
 
     def crawl_daily_stock(self):
         out_file = self.file_path + "/" + SHFE_DAILY_STOCK_FILE_FORMAT.format(self.mydate.isoformat())
@@ -68,32 +69,35 @@ class ShfeCollector(FutureExchangeCollector):
         if self.file_exists(out_file) and self.mydate_is_weekend():
             return
         url = SHFE_DAILY_VOLUME_URL.format(self.mydate.strftime("%Y%m%d"))
-        with request.urlopen(url) as f:
-            body = f.read()
-            data = json.loads(body.decode("utf-8"))["o_cursor"]
-            if data is None or not isinstance(data, list):
-                logger.error("failed to get data, response: %s", body)
-                return
-            volume_data = []
-            for el in data:
-                if el["RANK"] == 999:
-                    continue
-                volume_data.append({
-                    "instrument": el["INSTRUMENTID"].strip(),
-                    "rank": el["RANK"],
-                    "part_name_1": el["PARTICIPANTABBR1"].strip(),
-                    # "part_id_1": el["PARTICIPANTID1"].strip(),
-                    "trading_volume": el["CJ1"],
-                    "trading_volume_change": el["CJ1_CHG"],
-                    "part_name_2": el["PARTICIPANTABBR2"].strip(),
-                    # "part_id_2": el["PARTICIPANTID2"].strip(),
-                    "bid_volume": el["CJ2"],
-                    "bid_volume_change": el["CJ2_CHG"],
-                    "part_name_3": el["PARTICIPANTABBR3"].strip(),
-                    # "part_id_3": el["PARTICIPANTID3"].strip(),
-                    "ask_volume": el["CJ3"],
-                    "ask_volume_change": el["CJ3_CHG"]
-                })
-            utils.save(out_file, DAILY_VOLUME_HEADER, volume_data)
-
+        try:
+            with request.urlopen(url) as f:
+                body = f.read()
+                data = json.loads(body.decode("utf-8"))["o_cursor"]
+                if data is None or not isinstance(data, list):
+                    logger.error("failed to get data, response: %s", body)
+                    return
+                volume_data = []
+                for el in data:
+                    if el["RANK"] == 999:
+                        continue
+                    volume_data.append({
+                        "instrument": el["INSTRUMENTID"].strip(),
+                        "rank": el["RANK"],
+                        "part_name_1": el["PARTICIPANTABBR1"].strip(),
+                        # "part_id_1": el["PARTICIPANTID1"].strip(),
+                        "trading_volume": el["CJ1"],
+                        "trading_volume_change": el["CJ1_CHG"],
+                        "part_name_2": el["PARTICIPANTABBR2"].strip(),
+                        # "part_id_2": el["PARTICIPANTID2"].strip(),
+                        "bid_volume": el["CJ2"],
+                        "bid_volume_change": el["CJ2_CHG"],
+                        "part_name_3": el["PARTICIPANTABBR3"].strip(),
+                        # "part_id_3": el["PARTICIPANTID3"].strip(),
+                        "ask_volume": el["CJ3"],
+                        "ask_volume_change": el["CJ3_CHG"]
+                    })
+                utils.save(out_file, DAILY_VOLUME_HEADER, volume_data)
+        except HTTPError as e:
+            if e.code == 404:
+                logger.warning("current shfe daily volume not available, download later...")
 

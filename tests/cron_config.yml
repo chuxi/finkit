@@ -1,0 +1,5 @@
+timezone: 8
+
+jobs:
+  - func: cron.test_sleep.MySleeper.sleep
+    cron: "*/2 * * * * * *" # run every 2 seconds

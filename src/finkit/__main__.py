@@ -3,6 +3,7 @@ import logging
 
 from .collector import main as collector
 from .algorithm import option
+from .cron import cron as cron
 from . import utils
 
 utils.logging_config()
@@ -10,7 +11,7 @@ utils.logging_config()
 
 def main():
     parser = argparse.ArgumentParser(description="finance tools kit", prog="finkit")
-    parser.add_argument("--version", action="version", version="%(prog)s 0.0.1")
+    parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
 
     subparsers = parser.add_subparsers(title="actions")
 
@@ -52,9 +53,14 @@ def main():
                                help="specify the timezone info")
     option_parser.set_defaults(func=option)
 
+    cron_parser = subparsers.add_parser("cron", help="start crontab jobs")
+    cron_parser.add_argument("--cron-file", action="store", default="cron.yml",
+                             help="the cron config file for running jobs")
+    cron_parser.set_defaults(func=cron)
+
     args = parser.parse_args()
 
-    logging.info("finkit %s %s", args.func, args.source)
+    logging.info("finkit started: %s", args.__dict__)
     args.func(args)
 
 
