@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def cron(args):
     logger.info("parsing cron job from config file: %s", args.cron_file)
     jobs = []
-    with open(args.cron_file, "r") as f:
+    with open(args.cron_file, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
         if "timezone" not in config:
             tz = timezone(timedelta(hours=8))
