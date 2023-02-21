@@ -9,5 +9,8 @@ venv
 dist
 logs
 data
+sql
 
 *.pyc
+
+config.toml
