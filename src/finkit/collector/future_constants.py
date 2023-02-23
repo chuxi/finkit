@@ -8,3 +8,4 @@ DAILY_VOLUME_HEADER = ["date", "symbol", "rank",
                        "member_name", "trading_vol", "trading_vol_chg",
                        "long_member_name", "long_vol", "long_vol_chg",
                        "short_member_name", "short_vol", "short_vol_chg"]
+

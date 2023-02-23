@@ -2,9 +2,12 @@ import json
 import logging
 import urllib
 import zipfile
+from functools import reduce
+
 import pandas as pd
-from datetime import date
-from io import BytesIO
+import akshare as ak
+from datetime import date, datetime
+from io import BytesIO, StringIO
 from urllib import request, parse
 from urllib.error import HTTPError
 from .future_constants import *
@@ -190,3 +193,36 @@ def get_daily_vol_rank(mydate: date):
     dataset = ds1 + ds2 + ds3 + ds4
     return pd.DataFrame.from_records(data=dataset, columns=DAILY_VOLUME_HEADER)
 
+
+def get_daily_kline(mydate: date):
+    funcs = [ak.get_czce_daily, ak.get_cffex_daily, ak.get_ine_daily,
+             ak.get_gfex_daily, ak.get_dce_daily, ak.get_shfe_daily]
+    dfs = []
+    for f in funcs:
+        try:
+            tmp = f(mydate.strftime("%Y%m%d"))
+            if tmp is None:
+                logger.error("%s %s daily kline is not ready, return", mydate.isoformat(), f.__name__)
+                return
+            dfs.append(tmp)
+        except Exception as e:
+            logger.error("failed to get daily kline for date: %s, error: %s", mydate.isoformat(), e)
+            return None
+
+    df = pd.concat(dfs, ignore_index=True)
+    df = df[~df['symbol'].str.contains('-')]
+    df = df[~df['symbol'].str.startswith('SC_TAS')]
+    df = df.drop(['pre_settle', 'variety'], axis=1)
+
+    df['symbol'] = df['symbol'].astype(str)
+    df['date'] = df['date'].astype(str)
+    df['date'] = pd.to_datetime(df['date'])
+    df['open'] = pd.to_numeric(df['open'], errors='coerce')
+    df['high'] = pd.to_numeric(df['high'], errors='coerce')
+    df['low'] = pd.to_numeric(df['low'], errors='coerce')
+    df['close'] = pd.to_numeric(df['close'], errors='coerce')
+    df['settle'] = pd.to_numeric(df['settle'], errors='coerce')
+    df['turnover'] = pd.to_numeric(df['turnover'], errors='coerce')
+    df['volume'] = df['volume'].astype(int)
+    df['open_interest'] = df['open_interest'].astype(int)
+    return df
