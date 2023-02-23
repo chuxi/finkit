@@ -35,6 +35,6 @@ class CollectorContext(object):
             username = database.get("username")
             password = database.get("password")
             database_name = database.get("database")
-            url = sal.URL.create(driver, username, password, host, port, database_name)
+            url = sal.engine.URL.create(driver, username, password, host, port, database_name)
             self._engine = sal.create_engine(url)
         return self._engine
