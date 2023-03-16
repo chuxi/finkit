@@ -1,7 +1,7 @@
 [project]
 name = "finkit"
 description = "financial kit"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
     "pyyaml >= 6.0",
     "numpy >= 1.23",
@@ -17,7 +17,6 @@ dependencies = [
     "akshare >= 1.8"
 ]
 
-
 [project.scripts]
 finkit = "finkit.__main__:main"
 
@@ -28,6 +27,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 #include = ["finkit"]
+
+[tool.setuptools.package-data]
+finkit = ["*.csv"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"

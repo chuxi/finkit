@@ -11,7 +11,7 @@ from io import BytesIO, StringIO
 from urllib import request, parse
 from urllib.error import HTTPError
 from .future_constants import *
-
+from .. import utils
 
 logger = logging.getLogger(__name__)
 
@@ -195,8 +195,10 @@ def get_daily_vol_rank(mydate: date):
 
 
 def get_daily_kline(mydate: date):
-    funcs = [ak.get_czce_daily, ak.get_cffex_daily, ak.get_ine_daily,
-             ak.get_gfex_daily, ak.get_dce_daily, ak.get_shfe_daily]
+    funcs = [ak.get_shfe_daily, ak.get_dce_daily,
+             ak.get_czce_daily, ak.get_gfex_daily,
+             ak.get_cffex_daily]
+    vars_df = read_variety_info()["unit"]
     dfs = []
     for f in funcs:
         try:
@@ -209,12 +211,18 @@ def get_daily_kline(mydate: date):
             logger.error("failed to get daily kline for date: %s, error: %s", mydate.isoformat(), e)
             return None
 
+    # 2020-1-1前shfe交易量双边计算，统一成单边
+    if mydate < date(2020, 1, 1):
+        shfe_df = dfs[0]
+        shfe_df[['volume', 'open_interest']] = shfe_df[['volume', 'open_interest']] / 2
+
     df = pd.concat(dfs, ignore_index=True)
     df = df[~df['symbol'].str.contains('-')]
     df = df[~df['symbol'].str.startswith('SC_TAS')]
-    df = df.drop(['pre_settle', 'variety'], axis=1)
+    df = df.drop(['turnover'], axis=1)
 
     df['symbol'] = df['symbol'].astype(str)
+    df['variety'] = df['variety'].astype(str).str.upper()
     df['date'] = df['date'].astype(str)
     df['date'] = pd.to_datetime(df['date'])
     df['open'] = pd.to_numeric(df['open'], errors='coerce')
@@ -222,7 +230,11 @@ def get_daily_kline(mydate: date):
     df['low'] = pd.to_numeric(df['low'], errors='coerce')
     df['close'] = pd.to_numeric(df['close'], errors='coerce')
     df['settle'] = pd.to_numeric(df['settle'], errors='coerce')
-    df['turnover'] = pd.to_numeric(df['turnover'], errors='coerce')
-    df['volume'] = df['volume'].astype(int)
-    df['open_interest'] = df['open_interest'].astype(int)
+    # df['turnover'] = pd.to_numeric(df['turnover'], errors='coerce')
+    df['volume'] = pd.to_numeric(df['volume'], errors='coerce', downcast='integer')
+    df['open_interest'] = pd.to_numeric(df['open_interest'], errors='coerce', downcast='integer')
+    df['volume'].fillna(0, inplace=True)
+    df = pd.merge(df, vars_df, how="left", left_on=["variety"], right_index=True)
+    df['turnover'] = df['settle'] * df['volume'] * df['unit']
+    df.drop(columns="unit", inplace=True)
     return df

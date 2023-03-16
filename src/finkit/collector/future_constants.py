@@ -1,3 +1,5 @@
+import pandas as pd
+import os
 
 DCE_DAILY_VOLUME_URL = "http://www.dce.com.cn/publicweb/quotesdata/exportMemberDealPosiQuotesBatchData.html"
 CZCE_DAILY_VOLUME_URL = "http://www.czce.com.cn/cn/DFSStaticFiles/Future/{}/{}/FutureDataHolding.txt"
@@ -9,3 +11,9 @@ DAILY_VOLUME_HEADER = ["date", "symbol", "rank",
                        "long_member_name", "long_vol", "long_vol_chg",
                        "short_member_name", "short_vol", "short_vol_chg"]
 
+
+def read_variety_info():
+    module_dir = os.path.dirname(os.path.dirname(__file__))
+    variety_file = os.path.join(module_dir, "variety_info.csv")
+    df = pd.read_csv(variety_file, index_col='variety')
+    return df
