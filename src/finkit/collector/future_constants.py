@@ -2,7 +2,8 @@ import pandas as pd
 import os
 
 DCE_DAILY_VOLUME_URL = "http://www.dce.com.cn/publicweb/quotesdata/exportMemberDealPosiQuotesBatchData.html"
-CZCE_DAILY_VOLUME_URL = "http://www.czce.com.cn/cn/DFSStaticFiles/Future/{}/{}/FutureDataHolding.txt"
+CZCE_DAILY_VOLUME_URL_V1 = "http://www.czce.com.cn/cn/exchange/{}/datatradeholding/{}.txt"
+CZCE_DAILY_VOLUME_URL_V2 = "http://www.czce.com.cn/cn/DFSStaticFiles/Future/{}/{}/FutureDataHolding.txt"
 SHFE_DAILY_VOLUME_URL = "https://www.shfe.com.cn/data/dailydata/kx/pm{}.dat"
 CFFEX_DAILY_VOLUME_URL = "http://www.cffex.com.cn/sj/ccpm/{}/{}_1.csv"
 CFFEX_FUTURE_SYMBOLS = ["IF", "IC", "IM", "IH", "TS", "TF", "T"]
